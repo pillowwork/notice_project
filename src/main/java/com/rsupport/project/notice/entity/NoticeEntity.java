@@ -1,10 +1,12 @@
 package com.rsupport.project.notice.entity;
 
+import com.rsupport.project.attachment.entity.AttachmentEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "notice")
@@ -31,7 +33,11 @@ public class NoticeEntity {
     private String author;
 
     @Column(updatable = false)
+    @Builder.Default
     private LocalDateTime createDate = LocalDateTime.now();
     private int viewCount = 0;
+
+    @OneToMany(mappedBy = "notice", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<AttachmentEntity> attachments;
 
 }
