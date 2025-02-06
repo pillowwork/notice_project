@@ -25,8 +25,6 @@ public class AttachmentEntity {
     private Long fileSize;
     private String fileType;
 
-    @Builder.Default
-    private Boolean isDeleted = false;
     @Column(updatable = false)
     @Builder.Default
     private LocalDateTime createDate = LocalDateTime.now();

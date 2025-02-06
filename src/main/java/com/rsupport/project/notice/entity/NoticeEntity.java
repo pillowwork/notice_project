@@ -37,7 +37,7 @@ public class NoticeEntity {
     private LocalDateTime createDate = LocalDateTime.now();
     private int viewCount = 0;
 
-    @OneToMany(mappedBy = "notice", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "notice", cascade = CascadeType.ALL)
     private List<AttachmentEntity> attachments;
 
 }

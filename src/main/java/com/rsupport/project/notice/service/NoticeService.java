@@ -6,6 +6,7 @@ import com.rsupport.project.notice.dto.NoticeDto;
 import com.rsupport.project.notice.entity.NoticeEntity;
 import com.rsupport.project.notice.repository.NoticeRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.nio.file.Files;
@@ -52,9 +53,14 @@ public class NoticeService {
     }
 
     public Optional<NoticeDto.Response> readNotice(Long id) {
-        return noticeRepository.findById(id).map(NoticeDto.Response::new);
+        return noticeRepository.findById(id)
+                .map(entity -> {
+                    entity.setViewCount(entity.getViewCount() + 1);
+                    return new NoticeDto.Response(noticeRepository.save(entity));
+                });
     }
 
+    @Transactional
     public NoticeDto.Response updateNotice(Long id, NoticeDto.Request request) {
         return noticeRepository.findById(id)
                 .map(entity -> {
@@ -63,15 +69,20 @@ public class NoticeService {
                     entity.setStartDate(request.getStartDate());
                     entity.setEndDate(request.getEndDate());
                     entity.setAuthor(request.getAuthor());
-                    noticeRepository.save(entity);
+
+                    if (!entity.getAttachments().isEmpty()) {
+                        attachmentRepository.deleteAll(entity.getAttachments());
+                        entity.getAttachments().clear();
+                    }
 
                     if (request.getAttachments() != null) {
                         List<AttachmentEntity> attachments = request.getAttachments().stream()
                                 .map(file -> saveFile(file, entity))
                                 .collect(Collectors.toList());
-                        attachmentRepository.saveAll(attachments);
+                        entity.setAttachments(attachmentRepository.saveAll(attachments));
                     }
 
+                    noticeRepository.save(entity);
                     return new NoticeDto.Response(entity);
                 })
                 .orElseThrow(() -> new RuntimeException("공지사항을 찾을 수 없습니다."));

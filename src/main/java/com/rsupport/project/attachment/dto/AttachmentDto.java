@@ -15,7 +15,6 @@ public class AttachmentDto {
         private Long fileSize;
         private String fileType;
 
-        private Boolean isDeleted;
         private LocalDateTime createDate;
 
         public Response(AttachmentEntity entity) {
@@ -24,7 +23,6 @@ public class AttachmentDto {
             this.filePath = entity.getFilePath();
             this.fileSize = entity.getFileSize();
             this.fileType = entity.getFileType();
-            this.isDeleted = entity.getIsDeleted();
             this.createDate = entity.getCreateDate();
         }
     }
