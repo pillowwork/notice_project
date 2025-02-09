@@ -70,7 +70,7 @@ public class NoticeService {
                     entity.setEndDate(request.getEndDate());
                     entity.setAuthor(request.getAuthor());
 
-                    if (!entity.getAttachments().isEmpty()) {
+                    if (entity.getAttachments() != null) {
                         attachmentRepository.deleteAll(entity.getAttachments());
                         entity.getAttachments().clear();
                     }
@@ -90,7 +90,9 @@ public class NoticeService {
 
     public void deleteNotice(Long id) {
         noticeRepository.findById(id).ifPresent(entity -> {
-            attachmentRepository.deleteAll(entity.getAttachments());
+            if(entity.getAttachments() != null) {
+                attachmentRepository.deleteAll(entity.getAttachments());
+            }
             noticeRepository.delete(entity);
         });
     }
